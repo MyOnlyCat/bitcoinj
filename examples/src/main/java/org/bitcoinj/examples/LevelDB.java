@@ -27,7 +27,9 @@ public class LevelDB {
     public static void main(String[] args) throws Exception {
         /*
          * This is just a test runner that will download blockchain till block
+         * 这只是一个将下载区块链到block的测试运行器
          * 390000 then exit.
+         * 390000然后退出。
          */
         FullPrunedBlockStore store = new LevelDBFullPrunedBlockStore(
                 MainNetParams.get(), args[0], 1000, 100 * 1024 * 1024l,

@@ -40,6 +40,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Prints a list of IP addresses obtained from DNS.
+ * 打印从DNS获得的IP地址列表。
  */
 public class PrintPeers {
     private static InetSocketAddress[] dnsPeers;
@@ -104,6 +105,7 @@ public class PrintPeers {
                         }
                     }
                     // Now finish the future and close the connection
+                    //现在完成未来并关闭连接
                     future.set(null);
                     peer.close();
                 }
@@ -120,6 +122,7 @@ public class PrintPeers {
             futures.add(future);
         }
         // Wait for every tried connection to finish.
+        //等待所有尝试的连接完成。
         Futures.successfulAsList(futures).get();
     }
 }

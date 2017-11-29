@@ -29,12 +29,15 @@ import java.io.File;
 
 /**
  * The following example shows you how to create a SendRequest to send coins from a wallet to a given address.
+ *
+ * 下面的示例向您展示了如何创建从钱包发送硬币到给定地址的SendRequest。
  */
 public class SendRequest {
 
     public static void main(String[] args) throws Exception {
 
         // We use the WalletAppKit that handles all the boilerplate for us. Have a look at the Kit.java example for more details.
+        //我们使用WalletAppKit来处理我们所有的样板。看一看这个工具包。有关更多细节的java示例。
         NetworkParameters params = TestNet3Params.get();
         WalletAppKit kit = new WalletAppKit(params, new File("."), "sendrequest-example");
         kit.startAsync();
@@ -43,31 +46,44 @@ public class SendRequest {
         System.out.println("Send money to: " + kit.wallet().currentReceiveAddress().toString());
 
         // How much coins do we want to send?
+        //我们想寄多少钱?
         // The Coin class represents a monetary Bitcoin value.
+        //硬币类代表货币比特币的价值。
         // We use the parseCoin function to simply get a Coin instance from a simple String.
+        //我们使用parseCoin函数简单地从简单的字符串获取一个硬币实例
         Coin value = Coin.parseCoin("0.09");
 
         // To which address you want to send the coins?
+        //你想把硬币寄到哪个地址?
         // The Address class represents a Bitcoin address.
+        //Address类表示一个比特币地址。
         Address to = Address.fromBase58(params, "mupBAFeT63hXfeeT4rnAUcpKHDkz1n4fdw");
 
         // There are different ways to create and publish a SendRequest. This is probably the easiest one.
+        //有不同的方法来创建和发布一个SendRequest。这可能是最简单的。
         // Have a look at the code of the SendRequest class to see what's happening and what other options you have: https://bitcoinj.github.io/javadoc/0.11/com/google/bitcoin/core/Wallet.SendRequest.html
-        // 
+        //看看SendRequest类的代码,看看发生了什么,你有什么其他的选择:https://bitcoinj.github.io/javadoc/0.11/com/google/bitcoin/core/Wallet.SendRequest.html
         // Please note that this might raise a InsufficientMoneyException if your wallet has not enough coins to spend.
+        //请注意，如果您的钱包没有足够的硬币支出，则可能会引发InsufficientMoneyException。
         // When using the testnet you can use a faucet (like the http://faucet.xeno-genesis.com/) to get testnet coins.
+        //在使用testnet时，你可以使用一个faucet(比如http://faucet.xeno - genesis.com/)获得testnet币。
         // In this example we catch the InsufficientMoneyException and register a BalanceFuture callback that runs once the wallet has enough balance.
+        //在这个例子中,我们抓住InsufficientMoneyException BalanceFuture回调注册钱包有足够的平衡运行
         try {
             Wallet.SendResult result = kit.wallet().sendCoins(kit.peerGroup(), to, value);
             System.out.println("coins sent. transaction hash: " + result.tx.getHashAsString());
-            // you can use a block explorer like https://www.biteasy.com/ to inspect the transaction with the printed transaction hash. 
+            // you can use a block explorer like https://www.biteasy.com/ to inspect the transaction with the printed transaction hash.
+            //你可以使用像https://www.biteasy.com/这样的block explorer来检查与打印的事务散列的事务。
         } catch (InsufficientMoneyException e) {
             System.out.println("Not enough coins in your wallet. Missing " + e.missing.getValue() + " satoshis are missing (including fees)");
             System.out.println("Send money to: " + kit.wallet().currentReceiveAddress().toString());
 
             // Bitcoinj allows you to define a BalanceFuture to execute a callback once your wallet has a certain balance.
+            //Bitcoinj允许你定义一个平衡的未来来执行回调，一旦你的钱包有一定的平衡。
             // Here we wait until the we have enough balance and display a notice.
+            //在这里我们一直等到我们有足够的余额并显示出通知为止。
             // Bitcoinj is using the ListenableFutures of the Guava library. Have a look here for more information: https://github.com/google/guava/wiki/ListenableFutureExplained
+            //Bitcoinj正在使用Guava图书馆的ListenableFutures。看看这里的更多信息:https://github.com/google/guava/wiki/ListenableFutureExplained
             ListenableFuture<Coin> balanceFuture = kit.wallet().getBalanceFuture(value, BalanceType.AVAILABLE);
             FutureCallback<Coin> callback = new FutureCallback<Coin>() {
                 @Override

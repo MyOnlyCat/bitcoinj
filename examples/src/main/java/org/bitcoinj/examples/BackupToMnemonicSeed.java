@@ -25,10 +25,16 @@ import org.bitcoinj.wallet.Wallet;
 /**
  * The following example shows you how to create a deterministic seed from a hierarchical deterministic wallet represented as a mnemonic code.
  * This seed can be used to fully restore your wallet. The RestoreFromSeed.java example shows how to load the wallet from this seed.
- * 
+ *
  * In Bitcoin Improvement Proposal (BIP) 39 and BIP 32 describe the details about hierarchical deterministic wallets and mnemonic sentences
  * https://github.com/bitcoin/bips/blob/master/bip-0039.mediawiki
  * https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki
+ */
+
+/**
+ *下面的例子向您展示了如何从一个以助记符为代表的层次确定性钱包中创建一个确定的种子。
+ * 这种种子可以用来完全恢复你的钱包。RestoreFromSeed。java示例显示了如何从该种子加载钱包。
+ * 在比特币改进计划(BIP)39和BIP 32中，描述了等级决定主义的钱包和助记句子的细节
  */
 public class BackupToMnemonicSeed {
 

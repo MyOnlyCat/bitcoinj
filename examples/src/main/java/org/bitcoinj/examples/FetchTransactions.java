@@ -29,6 +29,7 @@ import java.util.List;
 
 /**
  * Downloads the given transaction and its dependencies from a peers memory pool then prints them out.
+ * 从对等内存池下载给定的事务及其依赖项，然后将它们打印出来。
  */
 public class FetchTransactions {
     public static void main(String[] args) throws Exception {

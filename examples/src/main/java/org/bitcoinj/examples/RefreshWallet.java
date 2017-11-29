@@ -29,6 +29,9 @@ import java.io.File;
 /**
  * RefreshWallet loads a wallet, then processes the block chain to update the transaction pools within it.
  * To get a test wallet you can use wallet-tool from the tools subproject.
+ *
+ * RefreshWallet装载一个钱包，然后处理区块链来更新其中的事务池。
+ *为了得到一个测试钱包，你可以从工具子项目中使用wallet工具。
  */
 public class RefreshWallet {
     public static void main(String[] args) throws Exception {
@@ -37,6 +40,7 @@ public class RefreshWallet {
         System.out.println(wallet.toString());
 
         // Set up the components and link them together.
+        //设置组件并将它们链接在一起。
         final NetworkParameters params = TestNet3Params.get();
         BlockStore blockStore = new MemoryBlockStore(params);
         BlockChain chain = new BlockChain(params, wallet, blockStore);
@@ -53,6 +57,7 @@ public class RefreshWallet {
         });
 
         // Now download and process the block chain.
+        //现在下载并处理区块链。
         peerGroup.downloadBlockChain();
         peerGroup.stopAsync();
         wallet.saveToFile(file);

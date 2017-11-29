@@ -22,6 +22,7 @@ import org.bitcoinj.wallet.Wallet;
 
 /**
  * DumpWallet loads a serialized wallet and prints information about what it contains.
+ * DumpWallet加载一个序列化的钱包，并打印出它所包含的信息。
  */
 public class DumpWallet {
     public static void main(String[] args) throws Exception {

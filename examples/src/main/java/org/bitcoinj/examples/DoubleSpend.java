@@ -33,6 +33,11 @@ import static org.bitcoinj.core.Coin.*;
  * spend the same output and sends them. It's useful for testing double spend codepaths but is otherwise not something
  * you would normally want to do.
  */
+
+/**
+ * 这是一个很小的测试应用程序，它在本地regtest节点上等待一个硬币，然后生成两个事务
+ * 相同的输出并发送它们。它对测试双花费codep咒骂是有用的，但不是什么东西
+ */
 public class DoubleSpend {
     public static void main(String[] args) throws Exception {
         BriefLogFormatter.init();

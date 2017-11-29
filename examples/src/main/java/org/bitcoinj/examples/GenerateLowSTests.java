@@ -47,7 +47,8 @@ import org.bitcoinj.wallet.RedeemData;
 /**
  * Test case generator for transactions with low-S and high-S signatures, to
  * test the LOW_S script validation flag.
- *
+ *用于低s和高签名的事务的测试用例生成器
+ *测试LOW_S脚本验证标志。
  * @author Ross Nicoll
  */
 public class GenerateLowSTests {
@@ -77,7 +78,9 @@ public class GenerateLowSTests {
         };
 
         // Generate a fictional output transaction we take values from, and
+        //生成一个虚构的输出事务，我们从中获取值
         // an input transaction for the test case
+        //测试用例的输入事务
 
         final Transaction outputTransaction = new Transaction(params);
         final Transaction inputTransaction = new Transaction(params);
@@ -89,7 +92,7 @@ public class GenerateLowSTests {
 
         addOutputs(outputTransaction, bag);
 
-        // Sign the transaction
+        // Sign the transaction  标志的事务
         final ProposedTransaction proposedTransaction = new ProposedTransaction(outputTransaction);
         signer.signInputs(proposedTransaction, bag);
         final TransactionInput input = proposedTransaction.partialTx.getInput(0);
@@ -102,6 +105,7 @@ public class GenerateLowSTests {
         final TransactionSignature signature = TransactionSignature.decodeFromBitcoin(scriptSig.getChunks().get(0).data, true, false);
 
         // First output a conventional low-S transaction with the LOW_S flag, for the tx_valid.json set
+        //首先输出一个常规的low - s事务，并使用LOW_S标志，以tx_valid。json集
         System.out.println("[\"A transaction with a low-S signature.\"],");
         System.out.println("[[[\""
             + inputTransaction.getHashAsString() + "\", "
@@ -117,6 +121,7 @@ public class GenerateLowSTests {
             EnumSet.of(Script.VerifyFlag.P2SH));
 
         // A high-S transaction without the LOW_S flag, for the tx_valid.json set
+        //A high-S transaction without the LOW_S flag, for the tx_valid.json set
         System.out.println("[\"A transaction with a high-S signature.\"],");
         System.out.println("[[[\""
             + inputTransaction.getHashAsString() + "\", "
@@ -126,6 +131,7 @@ public class GenerateLowSTests {
             + Script.VerifyFlag.P2SH.name() + "\"],");
 
         // Lastly a conventional high-S transaction with the LOW_S flag, for the tx_invalid.json set
+        //最后，使用LOW_S标志进行常规的high - s事务，用于tx_invalid。json集
         System.out.println("[\"A transaction with a high-S signature.\"],");
         System.out.println("[[[\""
             + inputTransaction.getHashAsString() + "\", "
@@ -148,6 +154,7 @@ public class GenerateLowSTests {
 
     /**
      * Convert a script to a string format that suits the style expected in
+     * 将脚本转换为符合预期样式的字符串格式
      * tx_valid.json and tx_invalid.json.
      */
     private static String scriptToString(Script scriptPubKey) {

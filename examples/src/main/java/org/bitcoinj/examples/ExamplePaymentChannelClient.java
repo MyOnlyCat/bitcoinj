@@ -48,6 +48,10 @@ import static org.bitcoinj.core.Coin.CENT;
 /**
  * Simple client that connects to the given host, opens a channel, and pays one cent.
  */
+
+/**
+ * 连接到给定主机的简单客户机，打开一个通道，并支付1美分。
+ */
 public class ExamplePaymentChannelClient {
     private static final org.slf4j.Logger log = LoggerFactory.getLogger(ExamplePaymentChannelClient.class);
     private WalletAppKit appKit;
@@ -102,6 +106,10 @@ public class ExamplePaymentChannelClient {
         // Bring up all the objects we need, create/load a wallet, sync the chain, etc. We override WalletAppKit so we
         // can customize it by adding the extension objects - we have to do this before the wallet file is loaded so
         // the plugin that knows how to parse all the additional data is present during the load.
+
+        //打开我们需要的所有对象，创建/加载一个钱包，同步链条等等，我们就可以超越WalletAppKit
+        //可以通过添加扩展对象来定制它——我们必须在加载钱包文件之前做到这一点
+        //在加载过程中，知道如何解析所有额外数据的插件。
         appKit = new WalletAppKit(params, new File("."), "payment_channel_example_client") {
             @Override
             protected List<WalletExtension> provideWalletExtensions() {
@@ -110,10 +118,17 @@ public class ExamplePaymentChannelClient {
                 // after a restart.
                 // We should not send a PeerGroup in the StoredPaymentChannelClientStates constructor
                 // since WalletAppKit will find it for us.
+
+                //StoredPaymentChannelClientStates对象负责,在其他事情上,广播
+                //如果它的锁时间过期了，退款事务。它还能保持频道，这样我们就可以重新开始
+                //重新启动后。
+                //我们不应该发送一个PeerGroup StoredPaymentChannelClientStates构造函数
+                //因为WalletAppKit会为我们找到它。
                 return ImmutableList.<WalletExtension>of(new StoredPaymentChannelClientStates(null));
             }
         };
         // Broadcasting can take a bit of time so we up the timeout for "real" networks
+        //广播可能需要一点时间，所以我们暂停了“真实”网络
         final int timeoutSeconds = params.getId().equals(NetworkParameters.ID_REGTEST) ? 15 : 150;
         if (params == RegTestParams.get()) {
             appKit.connectToLocalHost();
@@ -122,6 +137,9 @@ public class ExamplePaymentChannelClient {
         appKit.awaitRunning();
         // We now have active network connections and a fully synced wallet.
         // Add a new key which will be used for the multisig contract.
+
+        //我们现在有了活跃的网络连接和一个完全同步的钱包。
+        //添加一个新的密钥，该密钥将用于多用户合同。
         appKit.wallet().importKey(myKey);
         appKit.wallet().allowSpendingUnconfirmedTransactions();
 
@@ -133,6 +151,12 @@ public class ExamplePaymentChannelClient {
         //
         // Note that this may or may not actually construct a new channel. If an existing unclosed channel is found in
         // the wallet, then it'll re-use that one instead.
+
+        //创建管理支付通道协议的对象，客户端。告诉它服务器在哪里
+        //连接到is，连同一些合理的网络超时，钱包和我们的临时钥匙。我们也有
+        //在通道的持续时间内选择一定数量的锁。
+        //注意，这可能实际上并不构成一个新频道。如果存在一个现有的未闭合通道
+        //钱包，然后它会重新使用那个钱包。
         final InetSocketAddress server = new InetSocketAddress(host, 4242);
 
         waitForSufficientBalance(channelSize);
@@ -140,6 +164,10 @@ public class ExamplePaymentChannelClient {
         // Do this twice as each one sends 1/10th of a bitcent 5 times, so to send a bitcent, we do it twice. This
         // demonstrates resuming a channel that wasn't closed yet. It should close automatically once we run out
         // of money on the channel.
+
+        //这样做两次，因为每个都要发送1 / 10个比特的5倍，所以发送一个比特，我们做两次。这个
+        //演示了恢复尚未关闭的通道。一旦我们跑完，它应该自动关闭
+        //在通道上的钱。
         log.info("Round one ...");
         openAndSend(timeoutSeconds, server, channelID, 5, clientChannelProperties);
         log.info("Round two ...");
@@ -151,16 +179,19 @@ public class ExamplePaymentChannelClient {
     }
 
     private void openAndSend(int timeoutSecs, InetSocketAddress server, String channelID, final int times, IPaymentChannelClient.ClientChannelProperties clientChannelProperties) throws IOException, ValueOutOfRangeException, InterruptedException {
-        // Use protocol version 1 for simplicity
+        // Use protocol version 1 for simplicity  为了简单起见，使用协议版本1
         PaymentChannelClientConnection client = new PaymentChannelClientConnection(
                 server, timeoutSecs, appKit.wallet(), myKey, channelSize, channelID, null, clientChannelProperties);
-        // Opening the channel requires talking to the server, so it's asynchronous.
+        // Opening the channel requires talking to the server, so it's asynchronous. 打开通道需要与服务器对话，所以它是异步的。
         final CountDownLatch latch = new CountDownLatch(1);
         Futures.addCallback(client.getChannelOpenFuture(), new FutureCallback<PaymentChannelClientConnection>() {
             @Override
             public void onSuccess(PaymentChannelClientConnection client) {
                 // By the time we get here, if the channel is new then we already made a micropayment! The reason is,
                 // we are not allowed to have payment channels that pay nothing at all.
+
+                //当我们到达这里的时候，如果频道是新的，那么我们已经做了微支付!原因是,
+                //我们不允许有支付任何费用的支付渠道。
                 log.info("Success! Trying to make {} micropayments. Already paid {} satoshis on this channel",
                         times, client.state().getValueSpent());
                 final Coin MICROPAYMENT_SIZE = CENT.divide(10);
@@ -170,6 +201,11 @@ public class ExamplePaymentChannelClient {
                         // This callback is running on the user thread (see the last lines in openAndSend) so it's safe
                         // for us to block here: if we didn't select the right thread, we'd end up blocking the payment
                         // channels thread and would deadlock.
+
+                        //等等，因为微支付的行为是异步的，我们不允许重叠。
+                        //这个回调正在用户线程上运行(请参阅openAndSend的最后一行)，因此它是安全的
+                        //我们在此阻止:如果我们没有选择正确的线程，我们最终会阻止支付
+                        //通道线程和将死锁。
                         Uninterruptibles.getUninterruptibly(client.incrementPayment(MICROPAYMENT_SIZE));
                     } catch (ValueOutOfRangeException e) {
                         log.error("Failed to increment payment by a CENT, remaining value is {}", client.state().getValueRefunded());
@@ -185,10 +221,16 @@ public class ExamplePaymentChannelClient {
                     // left. If we never do this then eventually the server will time out and do it anyway and if the
                     // server goes away for longer, then eventually WE will time out and the refund tx will get broadcast
                     // by ourselves.
+
+                    //现在告诉服务器我们已经完成了，他们应该广播最终的交易，并给我们退款
+                    //左边。如果我们不这样做，服务器最终会超时，如果
+                    //服务器离开时间较长，最终我们将超时，退款tx将会播出
+                    //我们自己。
                     log.info("Settling channel for good");
                     client.settle();
                 } else {
                     // Just unplug from the server but leave the channel open so it can resume later.
+                    //从服务器上拔下插头，然后打开通道，这样它就可以在以后恢复。
                     client.disconnectWithoutSettlement();
                 }
                 latch.countDown();
@@ -204,9 +246,9 @@ public class ExamplePaymentChannelClient {
     }
 
     private void waitForSufficientBalance(Coin amount) {
-        // Not enough money in the wallet.
+        // Not enough money in the wallet. 钱包里没有足够的钱
         Coin amountPlusFee = amount.add(Transaction.REFERENCE_DEFAULT_MIN_TX_FEE);
-        // ESTIMATED because we don't really need to wait for confirmation.
+        // ESTIMATED because we don't really need to wait for confirmation. 估计是因为我们不需要等待确认。
         ListenableFuture<Coin> balanceFuture = appKit.wallet().getBalanceFuture(amountPlusFee, Wallet.BalanceType.ESTIMATED);
         if (!balanceFuture.isDone()) {
             System.out.println("Please send " + amountPlusFee.toFriendlyString() +

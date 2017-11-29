@@ -43,6 +43,10 @@ import java.util.List;
 /**
  * Shows connected peers in a table view, so you can watch as they come and go.
  */
+
+/**
+ * 在表视图中显示连接的对等点，因此您可以看到它们来来去去。
+ */
 public class PeerMonitor {
     private NetworkParameters params;
     private PeerGroup peerGroup;
@@ -102,6 +106,7 @@ public class PeerMonitor {
 
     private void refreshUI() {
         // Tell the Swing UI thread to redraw the peers table.
+        //告诉Swing UI线程重新绘制对等表。
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {

@@ -34,14 +34,25 @@ import java.net.InetAddress;
  * in which a private key with some coins associated with it is published. The goal is to import the private key,
  * claim the coins and then send them to a different address.
  */
+
+/**
+ * 这个例子展示了如何解决Hal在这里发布的挑战:
+ * <a href="http://www.bitcoin.org/smf/index.php?topic=3638.0">http://www.bitcoin.org/smf/index.php?topic=3638
+ * .0</a><p>
+ * 在其中一个带有一些硬币的私钥被发布。目标是导入私钥，
+ * 把硬币认领，然后寄到另一个地址。
+ */
 public class PrivateKeys {
     public static void main(String[] args) throws Exception {
         // TODO: Assumes main network not testnet. Make it selectable.
         NetworkParameters params = MainNetParams.get();
         try {
             // Decode the private key from Satoshis Base58 variant. If 51 characters long then it's from Bitcoins
-            // dumpprivkey command and includes a version byte and checksum, or if 52 characters long then it has 
+            //解码来自Satoshis Base58的私钥。如果51个字符长，那么它就是比特币
+            // dumpprivkey command and includes a version byte and checksum, or if 52 characters long then it has
+            //dumpprivkey命令，包含一个版本字节和校验和，或者如果有52个字符长
             // compressed pub key. Otherwise assume it's a raw key.
+            //压缩键。否则假设它是一个原始密钥。
             ECKey key;
             if (args[0].length() == 51 || args[0].length() == 52) {
                 DumpedPrivateKey dumpedPrivateKey = DumpedPrivateKey.fromBase58(params, args[0]);
@@ -55,10 +66,12 @@ public class PrivateKeys {
             Address destination = Address.fromBase58(params, args[1]);
 
             // Import the private key to a fresh wallet.
+            //将私钥导入一个新钱包。
             Wallet wallet = new Wallet(params);
             wallet.importKey(key);
 
             // Find the transactions that involve those coins.
+            //找到涉及这些硬币的交易。
             final MemoryBlockStore blockStore = new MemoryBlockStore(params);
             BlockChain chain = new BlockChain(params, wallet, blockStore);
 
