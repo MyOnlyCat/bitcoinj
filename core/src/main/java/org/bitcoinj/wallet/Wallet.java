@@ -251,6 +251,8 @@ public class Wallet extends BaseTaggableObject
     /**
      * Creates a new, empty wallet with a randomly chosen seed and no transactions. Make sure to provide for sufficient
      * backup! Any keys will be derived from the seed. If you want to restore a wallet from disk instead, see
+     * 创建一个新的，空的钱包，随机选择种子和没有交易。一定要提供足够的
+     *备份!任何键都来自种子。如果你想从磁盘上还原一个钱包，请看
      * {@link #loadFromFile}.
      */
     public Wallet(NetworkParameters params) {
@@ -267,9 +269,9 @@ public class Wallet extends BaseTaggableObject
     }
 
     /**
-     * @param params network parameters
-     * @param seed deterministic seed
-     * @return a wallet from a deterministic seed with a
+     * @param params network parameters 网络参数
+     * @param seed deterministic seed 确定的种子
+     * @return a wallet from a deterministic seed with a 一种带有宿命论种子的钱包
      * {@link org.bitcoinj.wallet.DeterministicKeyChain#ACCOUNT_ZERO_PATH 0 hardened path}
      */
     public static Wallet fromSeed(NetworkParameters params, DeterministicSeed seed) {
@@ -277,10 +279,10 @@ public class Wallet extends BaseTaggableObject
     }
 
     /**
-     * @param params network parameters
-     * @param seed deterministic seed
-     * @param accountPath account path
-     * @return an instance of a wallet from a deterministic seed.
+     * @param params network parameters 网络参数
+     * @param seed deterministic seed 确定的种子
+     * @param accountPath account path 账户的路径
+     * @return an instance of a wallet from a deterministic seed. 来自决定论种子的钱包的实例
      */
     public static Wallet fromSeed(NetworkParameters params, DeterministicSeed seed, ImmutableList<ChildNumber> accountPath) {
         return new Wallet(params, new KeyChainGroup(params, seed, accountPath));
@@ -289,6 +291,8 @@ public class Wallet extends BaseTaggableObject
     /**
      * Creates a wallet that tracks payments to and from the HD key hierarchy rooted by the given watching key. A
      * watching key corresponds to account zero in the recommended BIP32 key hierarchy.
+     * 创建一个钱包，用来跟踪支付的支付，以及基于给定的监视键的HD键层次结构。A
+     * 观察键对应于推荐的BIP32键层次结构中的0。
      */
     public static Wallet fromWatchingKey(NetworkParameters params, DeterministicKey watchKey) {
         return new Wallet(params, new KeyChainGroup(params, watchKey));
@@ -296,6 +300,7 @@ public class Wallet extends BaseTaggableObject
 
     /**
      * Creates a wallet that tracks payments to and from the HD key hierarchy rooted by the given watching key. The account path is specified.
+     * 创建一个钱包，用于跟踪由给定的监视键所支持的HD键层次结构的支付。指定帐户路径。
      */
     public static Wallet fromWatchingKey(NetworkParameters params, DeterministicKey watchKey, ImmutableList<ChildNumber> accountPath) {
         return new Wallet(params, new KeyChainGroup(params, watchKey, accountPath));
@@ -305,6 +310,9 @@ public class Wallet extends BaseTaggableObject
      * Creates a wallet that tracks payments to and from the HD key hierarchy rooted by the given watching key. A
      * watching key corresponds to account zero in the recommended BIP32 key hierarchy. The key is specified in base58
      * notation and the creation time of the key. If you don't know the creation time, you can pass
+     * 创建一个钱包，用来跟踪支付的支付，以及基于给定的监视键的HD键层次结构。A
+     *观察键对应于推荐的BIP32键层次结构中的0。键在base58中指定
+     *符号和密钥的创建时间。如果您不知道创建时间，您可以通过
      * {@link DeterministicHierarchy#BIP32_STANDARDISATION_TIME_SECS}.
      */
     public static Wallet fromWatchingKeyB58(NetworkParameters params, String watchKeyB58, long creationTimeSeconds) {
@@ -317,6 +325,9 @@ public class Wallet extends BaseTaggableObject
      * Creates a wallet that tracks payments to and from the HD key hierarchy rooted by the given watching key. The
      * account path is specified. The key is specified in base58 notation and the creation time of the key. If you don't
      * know the creation time, you can pass {@link DeterministicHierarchy#BIP32_STANDARDISATION_TIME_SECS}.
+     * 创建一个钱包，用来跟踪支付的支付，以及基于给定的监视键的HD键层次结构。在
+     *帐户路径指定。关键在于base58标记和密钥的创建时间。如果你不
+     *知道创建时间，可以通过{@ link限定词- BIP32_STANDARDISATION_TIME_SECS}。
      */
     public static Wallet fromWatchingKeyB58(NetworkParameters params, String watchKeyB58, long creationTimeSeconds,
             ImmutableList<ChildNumber> accountPath) {
@@ -327,6 +338,7 @@ public class Wallet extends BaseTaggableObject
 
     /**
      * Creates a wallet containing a given set of keys. All further keys will be derived from the oldest key.
+     * 创建一个包含给定的键集的钱包。所有进一步的键将从最古老的键派生出来。
      */
     public static Wallet fromKeys(NetworkParameters params, List<ECKey> keys) {
         for (ECKey key : keys)
@@ -350,6 +362,9 @@ public class Wallet extends BaseTaggableObject
         // If this keyChainGroup was created fresh just now (new wallet), make HD so a backup can be made immediately
         // without having to call current/freshReceiveKey. If there are already keys in the chain of any kind then
         // we're probably being deserialized so leave things alone: the API user can upgrade later.
+        //如果这个keyChainGroup现在刚刚创建了新钱包(新钱包)，就可以做HD，这样就可以立即备份
+        //不需要调用current / freshReceiveKey。如果在任何种类的链上已经有钥匙了
+        //我们可能被反序列化了，所以不要让事情变得简单:API用户可以在以后升级。
         if (this.keyChainGroup.numKeys() == 0)
             this.keyChainGroup.createAndActivateNewHDChain();
         watchedScripts = Sets.newHashSet();
@@ -360,6 +375,7 @@ public class Wallet extends BaseTaggableObject
         transactions = new HashMap<>();
         extensions = new HashMap<>();
         // Use a linked hash map to ensure ordering of event listeners is correct.
+        //使用链接的哈希表来确保事件监听器的排序是正确的。
         confidenceChanged = new LinkedHashMap<>();
         signers = new ArrayList<>();
         addTransactionSigner(new LocalTransactionSigner());
@@ -377,6 +393,12 @@ public class Wallet extends BaseTaggableObject
                 // doesn't necessarily know at that point which wallets contain which transactions, so it's up
                 // to us to listen for that. Other types of confidence changes (type, etc) are triggered by us,
                 // so we'll queue up a wallet change event in other parts of the code.
+                //这将在用户代码线程上运行，因此我们不应该在这里做任何太复杂的事情。
+                //我们只是想要排队换一个钱包，如果其他的人宣布的话，自动保存
+                //交易发生了变化，因为信任的改变是由网络代码做出的
+                //不一定知道钱包里包含哪些交易，所以它就上升了
+                //让我们听一听。其他类型的信心改变(类型等)由我们触发，
+                //所以我们会在代码的其他部分排队一个钱包改变事件。
                 if (reason == ChangeReason.SEEN_PEERS) {
                     lock.lock();
                     try {

@@ -52,7 +52,7 @@ import static org.bitcoinj.core.Coin.CENT;
 /**
  * 连接到给定主机的简单客户机，打开一个通道，并支付1美分。
  */
-public class ExamplePaymentChannelClient {
+public class    ExamplePaymentChannelClient {
     private static final org.slf4j.Logger log = LoggerFactory.getLogger(ExamplePaymentChannelClient.class);
     private WalletAppKit appKit;
     private final Coin channelSize;

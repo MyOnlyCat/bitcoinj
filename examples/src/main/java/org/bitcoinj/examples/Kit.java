@@ -50,9 +50,9 @@ public class Kit {
 
         // First we configure the network we want to use.首先我们配置我们想要使用的网络。
         // The available options are:可用的选项是:
-        // - MainNetParams
-        // - TestNet3Params
-        // - RegTestParams
+        // - MainNetParams 公共测试网络
+        // - TestNet3Params 生产网络
+        // - RegTestParams 私有测试网络
         // While developing your application you probably want to use the Regtest mode and run your local bitcoin network. Run bitcoind with the -regtest flag
         //在开发应用程序时，您可能希望使用Regtest模式并运行本地比特币网络。使用- regtest标记运行bitcoind
         // To test you app with a real network you can use the testnet. The testnet is an alternative bitcoin network that follows the same rules as main network. Coins are worth nothing and you can get coins for example from http://faucet.xeno-genesis.com/
